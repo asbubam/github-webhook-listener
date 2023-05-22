@@ -1,0 +1,53 @@
+service: github-webhook-listener
+
+provider:
+  name: aws
+  runtime: nodejs10.x
+  region: ap-northeast-2
+  stage: dev
+  role: arn:aws:iam::${env:TARGET_AWS_ACCOUNT_ID}:role/lambda-vpc-execution-role
+  environment:
+    GITHUB_WEBHOOK_SECRET: ${env:GITHUB_WEBHOOK_SECRET}
+  resourcePolicy:
+    - Effect: Allow
+      Principal: "*"
+      Action: execute-api:Invoke
+      Resource:
+        - execute-api:/*/*/*
+      Condition:
+        IpAddress:
+          aws:SourceIp:
+            # GitHub hook ip address
+            - "192.30.252.0/22"
+            - "185.199.108.0/22"
+            - "140.82.112.0/20"
+  
+functions:
+  githubWebhookListener:
+    handler: handler.githubWebhookListener
+    events:
+      - http:
+          path: webhook
+          method: post
+          cors: true
+          request:
+            parameters:
+              querystrings:
+                hookURL: true
+    vpc:
+      securityGroupIds:
+        - ${env:VPC_SG_ID} 
+      subnetIds:
+        - ${env:VPC_SUBNET_A_ID} 
+        - ${env:VPC_SUBNET_C_ID} 
+
+plugins:
+  - serverless-domain-manager
+
+custom:
+  customDomain:
+    domainName: ${env:CUSTOM_DOMAIN} 
+    basePath: ""
+    stage: ${self:provider.stage}
+    createRoute53Record: true
+    endpointType: 'regional'

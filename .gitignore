@@ -1,0 +1,8 @@
+.idea
+.build
+.serverless
+package
+.direnv
+.envrc
+*.swp
+node_modules

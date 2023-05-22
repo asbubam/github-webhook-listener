@@ -1,0 +1,22 @@
+{
+  "name": "github-webhook-listener",
+  "version": "0.0.1",
+  "description": "Extend your github repositories with this github webhook listener",
+  "main": "handler.js",
+  "scripts": {
+    "deploy": "./scripts/deploy.sh",
+    "remove": "./scripts/remove.sh",
+    "logs": "./scripts/logs.sh",
+    "create_domain": "./scripts/create_domain.sh",
+    "delete_domain": "./scripts/delete_domain.sh"
+  },
+  "author": "asbubam",
+  "license": "MIT",
+  "devDependencies": {
+    "serverless": "^1.45.1",
+    "serverless-domain-manager": "^3.2.2"
+  },
+  "dependencies": {
+    "request": "^2.88.0"
+  }
+}
